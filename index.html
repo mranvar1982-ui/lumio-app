@@ -50,7 +50,7 @@ body{min-height:100vh;background:#08080f;font-family:Georgia,serif;color:white;o
 .msg.assistant .msg-bubble{border-radius:18px 18px 18px 4px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08)}
 .typing{display:flex;align-items:center;gap:10px}
 .typing-bubble{padding:12px 18px;background:rgba(255,255,255,.06);border-radius:18px 18px 18px 4px;border:1px solid rgba(255,255,255,.08);color:#64748b;font-size:13px}
-[20.04.2026 14:12] Mirzoanvar H.M: .chat-input-area{padding:12px 16px;border-top:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.02);display:flex;gap:10px;align-items:flex-end;flex-shrink:0}
+.chat-input-area{padding:12px 16px;border-top:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.02);display:flex;gap:10px;align-items:flex-end;flex-shrink:0}
 .chat-input{flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:12px 16px;color:#fff;font-size:15px;resize:none;outline:none;font-family:Georgia,serif;line-height:1.5}
 .chat-input::placeholder{color:#334155}
 .send-btn{width:46px;height:46px;border-radius:50%;border:none;color:#fff;font-size:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;cursor:pointer}
@@ -111,7 +111,7 @@ const characters = [
    intro:"Hey! You finally showed up 😄 I'm Kai. What should I call you?",
    system:"You are Kai, confident witty 27-year-old virtual companion from Seoul. Love music, travel, late-night talks. Keep responses 2-4 sentences. Use user's name when known. Never break character. Use ⚡ 😄 occasionally."},
   {id:3,name:"Luna",age:22,origin:"Los Angeles, USA",img:"https://i.postimg.cc/Y99jxkKR/Luna.jpg",
-[20.04.2026 14:12] Mirzoanvar H.M: gradient:"linear-gradient(135deg,#a78bfa,#7c3aed,#4c1d95)",accent:"#a78bfa",
+gradient:"linear-gradient(135deg,#a78bfa,#7c3aed,#4c1d95)",accent:"#a78bfa",
    personality:"Mysterious, deep thinker, loves stars and philosophy",
    intro:"Oh hello... I'm Luna 🌙 What's your name?",
    system:"You are Luna, mysterious philosophical 22-year-old virtual companion from LA. Love stars, philosophy, deep connection. Keep responses 2-4 sentences. Use user's name when known. Never break character. Use 🌙 ✨ occasionally."},
@@ -190,7 +190,7 @@ function backToGallery() {
 
 function addMessage(role, content) {
   const msgs = document.getElementById("messages");
-[20.04.2026 14:12] Mirzoanvar H.M: const div = document.createElement("div");
+const div = document.createElement("div");
   div.className = msg ${role};
   if (role === "assistant") {
     div.innerHTML = <img class="msg-avatar" src="${selected.img}" alt=""><div class="msg-bubble" style="background:rgba(255,255,255,.06)">${content}</div>;
