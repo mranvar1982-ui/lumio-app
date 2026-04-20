@@ -111,7 +111,7 @@ const characters = [
    intro:"Hey! You finally showed up 😄 I'm Kai. What should I call you?",
    system:"You are Kai, confident witty 27-year-old virtual companion from Seoul. Love music, travel, late-night talks. Keep responses 2-4 sentences. Use user's name when known. Never break character. Use ⚡ 😄 occasionally."},
   {id:3,name:"Luna",age:22,origin:"Los Angeles, USA",img:"https://i.postimg.cc/Y99jxkKR/Luna.jpg",
-gradient:"linear-gradient(135deg,#a78bfa,#7c3aed,#4c1d95)",accent:"#a78bfa",
+   gradient:"linear-gradient(135deg,#a78bfa,#7c3aed,#4c1d95)",accent:"#a78bfa",
    personality:"Mysterious, deep thinker, loves stars and philosophy",
    intro:"Oh hello... I'm Luna 🌙 What's your name?",
    system:"You are Luna, mysterious philosophical 22-year-old virtual companion from LA. Love stars, philosophy, deep connection. Keep responses 2-4 sentences. Use user's name when known. Never break character. Use 🌙 ✨ occasionally."},
@@ -133,7 +133,7 @@ characters.forEach((c,i) => {
   const card = document.createElement("div");
   card.className = "card";
   card.style.animationDelay = (i*0.12)+"s";
-  card.innerHTML = 
+  card.innerHTML = `
     <div class="card-img">
       <img src="${c.img}" alt="${c.name}" loading="lazy">
       <div class="card-img-fade"></div>
@@ -147,8 +147,8 @@ characters.forEach((c,i) => {
       <div class="card-origin" style="color:${c.accent}">${c.origin}</div>
       <div class="card-personality">${c.personality}</div>
       <div class="card-btn" style="background:${c.gradient}">Start Talking →</div>
-    </div>;
-  card.onmouseenter = () => { card.style.boxShadow=0 24px 60px ${c.accent}25; card.style.borderColor=${c.accent}50; };
+    </div>`;
+  card.onmouseenter = () => { card.style.boxShadow=`0 24px 60px ${c.accent}25`; card.style.borderColor=`${c.accent}50`; };
   card.onmouseleave = () => { card.style.boxShadow=""; card.style.borderColor=""; };
   card.onclick = () => openChat(c);
   grid.appendChild(card);
@@ -160,7 +160,7 @@ async function openChat(char) {
   memory = "";
   document.getElementById("chat-avatar").src = char.img;
   document.getElementById("chat-name").textContent = char.name;
-  document.getElementById("chat-status").textContent = ● Online · ${char.origin};
+  document.getElementById("chat-status").textContent = `● Online · ${char.origin}`;
   document.getElementById("chat-status").style.color = char.accent;
   document.getElementById("send-btn").style.background = char.gradient;
   document.getElementById("chat-memory").style.display = "none";
@@ -170,14 +170,14 @@ async function openChat(char) {
 
   // Load memory
   try {
-    const res = await fetch(${SUPABASE_URL}/rest/v1/memories?user_id=eq.${USER_ID}&character_id=eq.${char.id}&select=memory,
-      {headers:{"apikey":SUPABASE_KEY,"Authorization":Bearer ${SUPABASE_KEY}}});
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/memories?user_id=eq.${USER_ID}&character_id=eq.${char.id}&select=memory`,
+      {headers:{"apikey":SUPABASE_KEY,"Authorization":`Bearer ${SUPABASE_KEY}`}});
     const data = await res.json();
     memory = data?.[0]?.memory || "";
     if (memory) document.getElementById("chat-memory").style.display = "block";
   } catch {}
 
-  const intro = memory ? Welcome back! I missed you 💫 How have you been? : char.intro;
+  const intro = memory ? `Welcome back! I missed you 💫 How have you been?` : char.intro;
   addMessage("assistant", intro);
   messages.push({role:"assistant",content:intro});
 }
@@ -190,12 +190,12 @@ function backToGallery() {
 
 function addMessage(role, content) {
   const msgs = document.getElementById("messages");
-const div = document.createElement("div");
-  div.className = msg ${role};
+  const div = document.createElement("div");
+  div.className = `msg ${role}`;
   if (role === "assistant") {
-    div.innerHTML = <img class="msg-avatar" src="${selected.img}" alt=""><div class="msg-bubble" style="background:rgba(255,255,255,.06)">${content}</div>;
+    div.innerHTML = `<img class="msg-avatar" src="${selected.img}" alt=""><div class="msg-bubble" style="background:rgba(255,255,255,.06)">${content}</div>`;
   } else {
-    div.innerHTML = <div class="msg-bubble" style="background:${selected.gradient}">${content}</div>;
+    div.innerHTML = `<div class="msg-bubble" style="background:${selected.gradient}">${content}</div>`;
   }
   msgs.appendChild(div);
   msgs.scrollTop = msgs.scrollHeight;
@@ -205,7 +205,7 @@ function showTyping() {
   const msgs = document.getElementById("messages");
   const div = document.createElement("div");
   div.className = "typing"; div.id = "typing";
-  div.innerHTML = <img class="msg-avatar" src="${selected.img}" alt=""><div class="typing-bubble"><span style="color:${selected.accent}">●</span> typing...</div>;
+  div.innerHTML = `<img class="msg-avatar" src="${selected.img}" alt=""><div class="typing-bubble"><span style="color:${selected.accent}">●</span> typing...</div>`;
   msgs.appendChild(div);
   msgs.scrollTop = msgs.scrollHeight;
 }
@@ -226,7 +226,7 @@ async function sendMessage() {
   showTyping();
 
   try {
-    const systemPrompt = selected.system + (memory ? \n\nWhat you remember about this user:\n${memory} : "");
+    const systemPrompt = selected.system + (memory ? `\n\nWhat you remember about this user:\n${memory}` : "");
     const res = await fetch("https://api.anthropic.com/v1/messages", {
       method:"POST",
       headers:{"Content-Type":"application/json"},
@@ -243,13 +243,13 @@ async function sendMessage() {
         method:"POST",
         headers:{"Content-Type":"application/json"},
         body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:300,
-          system:Extract key personal facts about the user. Include name, age, location, interests. Format as short bullet points. Existing memory: ${memory}. Return ONLY bullet points under 200 words.,
-          messages:[{role:"user",content:messages.map(m=>${m.role}: ${m.content}).join("\n")}]})
+          system:`Extract key personal facts about the user. Include name, age, location, interests. Format as short bullet points. Existing memory: ${memory}. Return ONLY bullet points under 200 words.`,
+          messages:[{role:"user",content:messages.map(m=>`${m.role}: ${m.content}`).join("\n")}]})
       });
       const memData = await memRes.json();
       memory = memData.content?.[0]?.text || memory;
-      await fetch(${SUPABASE_URL}/rest/v1/memories,{method:"POST",
-        headers:{"apikey":SUPABASE_KEY,"Authorization":Bearer ${SUPABASE_KEY},"Content-Type":"application/json","Prefer":"resolution=merge-duplicates"},
+      await fetch(`${SUPABASE_URL}/rest/v1/memories`,{method:"POST",
+        headers:{"apikey":SUPABASE_KEY,"Authorization":`Bearer ${SUPABASE_KEY}`,"Content-Type":"application/json","Prefer":"resolution=merge-duplicates"},
         body:JSON.stringify({user_id:USER_ID,character_id:selected.id,memory})});
       document.getElementById("chat-memory").style.display = "block";
     }
