@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+[20.04.2026 11:51] Mirzoanvar H.M: <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -21,5 +21,81 @@ p{color:#475569;font-size:18px;line-height:1.7;margin-bottom:40px}
 <p>Real conversations. Genuine connection.<br>Always here for you.</p>
 <a href="#" class="btn">Meet Your Companion →</a>
 </div>
+</body>
+</html>
+[20.04.2026 12:19] Mirzoanvar H.M: const div = document.createElement("div");
+  div.className = msg ${role};
+  if (role === "assistant") {
+    div.innerHTML = <img class="msg-avatar" src="${selected.img}" alt=""><div class="msg-bubble" style="background:rgba(255,255,255,.06)">${content}</div>;
+  } else {
+    div.innerHTML = <div class="msg-bubble" style="background:${selected.gradient}">${content}</div>;
+  }
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function showTyping() {
+  const msgs = document.getElementById("messages");
+  const div = document.createElement("div");
+  div.className = "typing"; div.id = "typing";
+  div.innerHTML = <img class="msg-avatar" src="${selected.img}" alt=""><div class="typing-bubble"><span style="color:${selected.accent}">●</span> typing...</div>;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function hideTyping() {
+  const t = document.getElementById("typing");
+  if (t) t.remove();
+}
+
+async function sendMessage() {
+  const input = document.getElementById("chat-input");
+  const text = input.value.trim();
+  if (!text || loading) return;
+  loading = true;
+  input.value = "";
+  addMessage("user", text);
+  messages.push({role:"user",content:text});
+  showTyping();
+
+  try {
+    const systemPrompt = selected.system + (memory ? \n\nWhat you remember about this user:\n${memory} : "");
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,system:systemPrompt,messages:messages})
+    });
+    const data = await res.json();
+    const reply = data.content?.[0]?.text || "...";
+    hideTyping();
+    addMessage("assistant", reply);
+    messages.push({role:"assistant",content:reply});
+
+    if (messages.length % 6 === 0) {
+      const memRes = await fetch("https://api.anthropic.com/v1/messages", {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:300,
+          system:Extract key personal facts about the user. Include name, age, location, interests. Format as short bullet points. Existing memory: ${memory}. Return ONLY bullet points under 200 words.,
+          messages:[{role:"user",content:messages.map(m=>${m.role}: ${m.content}).join("\n")}]})
+      });
+      const memData = await memRes.json();
+      memory = memData.content?.[0]?.text || memory;
+      await fetch(${SUPABASE_URL}/rest/v1/memories,{method:"POST",
+        headers:{"apikey":SUPABASE_KEY,"Authorization":Bearer ${SUPABASE_KEY},"Content-Type":"application/json","Prefer":"resolution=merge-duplicates"},
+        body:JSON.stringify({user_id:USER_ID,character_id:selected.id,memory})});
+      document.getElementById("chat-memory").style.display = "block";
+    }
+  } catch {
+    hideTyping();
+    addMessage("assistant","I'm here... 💫 try again?");
+  }
+  loading = false;
+}
+
+function handleKey(e) {
+  if (e.key==="Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+}
+</script>
 </body>
 </html>
